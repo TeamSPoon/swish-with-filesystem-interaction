@@ -62,9 +62,11 @@ their own version.
 %	hard-to-guess location. Returns a JSON  object that provides the
 %	URL for the data and the plain   file name. Understands the HTTP
 %	methods =GET=, =POST=, =PUT= and =DELETE=.
+doug_debug(O):-format(user_error,'~nDOUG_DEBUG: ~q.~n',[O]),!.
 
 web_storage(Request) :-
 	option(method(Method), Request),
+        doug_debug(storage(Method, Request)),
 	storage(Method, Request).
 
 storage(get, Request) :-
@@ -75,6 +77,27 @@ storage(get, Request) :-
 					 ])
 			]),
 	storage_get(Request, Format).
+
+
+storage(post, Request) :-
+	once((http_parameters(Request,
+			[   data(Data, [default(''),
+					description('Data to be saved')]),
+			    type(_Type, [default(pl)])
+			]),
+	authentity(Request, _Authentity),
+	setting(directory, Dir),
+	make_directory_path(Dir),
+        doug_debug(storage(post,Dir:Request,Data)),
+        member(referer(Ref),Request),
+        atomic_list_concat([_,Rest],'swish/filesystem/',Ref),
+        exists_file(Rest),
+        setup_call_cleanup(
+           open(Rest, write, Out, [encoding(utf8)]),
+		format(Out, '~s', [Data]),
+		close(Out)),
+        doug_debug(storage(save,Rest,Data)))),fail.
+
 storage(post, Request) :-
 	http_parameters(Request,
 			[   data(Data, [default(''),
@@ -84,6 +107,7 @@ storage(post, Request) :-
 	authentity(Request, Authentity),
 	setting(directory, Dir),
 	make_directory_path(Dir),
+        doug_debug(storage(post,Dir:Request,Data)),
 	(   repeat,
 	    random_filename(Base),
 	    file_name_extension(Base, Type, File),

@@ -64,6 +64,8 @@ preferences.setDefault("semantic-highlighting", true);
       "Examples": function(navbar, dropdown) {
 	$("body").swish('populateExamples', navbar, dropdown);
       },
+	 "Filesystems": function(navbar, dropdown) { $("body").swish('populateFilesystems', navbar, dropdown); },
+      
       "Help":
       { "About ...": function() {
 	  menuBroadcast("help", {file:"about.html"});
@@ -177,6 +179,38 @@ preferences.setDefault("semantic-highlighting", true);
 		   $("#navbar").navbar('extendDropdown', dropdown,
 				       data[i].title,
 				       that.swish('openExampleFunction',
+						  data[i]));
+		 }
+	       }
+	     });
+      return this;
+    },
+
+    /**
+     * @param {String} ex is the name of the example
+     * @returns {Function} function that loads an example
+     */
+    openFilesystemsFunction: function(ex) {
+      return function() {
+	window.location = ex.href;
+      };
+    },
+
+    /**
+     * Populate the Filesystems dropdown of the navigation bar. This
+     * menthod is used by the navigation bar initialization.
+     * @param {Object} navbar is the navigation bar
+     * @param {Object} dropdown is the examples dropdown
+     */
+    populateFilesystems: function(navbar, dropdown) {
+      var that = this;
+      $.ajax(config.http.locations.swish_filesystems,
+	     { dataType: "json",
+	       success: function(data) {
+		 for(var i=0; i<data.length; i++) {
+		   $("#navbar").navbar('extendDropdown', dropdown,
+				       data[i].title,
+				       that.swish('openFilesystemsFunction',
 						  data[i]));
 		 }
 	       }

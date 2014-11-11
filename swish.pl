@@ -39,6 +39,7 @@
 :- use_module(lib/page, []).
 :- use_module(lib/storage).
 :- use_module(lib/examples).
+:- use_module(lib/filesystems).
 :- use_module(lib/help).
 :- use_module(lib/highlight).
 
@@ -62,6 +63,7 @@ set_swish_path :-
 :- set_swish_path.
 
 http:location(swish, root(.), [priority(-100)]).
+http:location(swish, root(swish), [priority(-100)]).
 
 		 /*******************************
 		 *	      CONFIG		*
@@ -98,6 +100,7 @@ pengines:prepare_module(Module, swish, _Options) :-
 
 :- use_module(swish(lib/render/sudoku), []).
 :- use_module(swish(lib/render/chess), []).
+:- use_module(swish(lib/render/html), []).
 :- use_module(swish(lib/render/table), []).
 :- use_module(swish(lib/render/codes), []).
 :- use_module(swish(lib/render/svgtree), []).

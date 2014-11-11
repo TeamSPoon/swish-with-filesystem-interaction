@@ -28,7 +28,8 @@ define([ "jquery" ],
 var config = { http:
 	       { locations:
 		 { pengines: "/pengine",
-		   swish_examples: "/swish/list_examples"
+		   swish_examples: "/swish/list_examples",
+		   swish_filesystems: "/swish/list_filesystems",
 		 }
 	       }
 	     };

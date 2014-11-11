@@ -155,6 +155,8 @@ call_term_rendering(Module, Term, Vars, Options, Tokens) :-
 	merge_options(RenderOptions, Options, AllOptions),
 	phrase(RenderModule:term_rendering(Term, Vars, AllOptions), Tokens).
 
+user:term_rendering(Term, _Vars, _Options) --> {compound(Term),Term=html(_)}, html(Term).
+
 %%	is_new(!State, +M) is semidet.
 %
 %	Only succeeds once for each new ground value M.

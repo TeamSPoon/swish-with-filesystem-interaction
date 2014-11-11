@@ -143,15 +143,32 @@ source_data(Info, Code) :-
 	catch(swish_config:source_alias(Alias), E,
 	      (print_message(warning, E), fail)),
 	Spec =.. [Alias,File],
-	http_safe_file(Spec, []),
+	% http_safe_file(Spec, []),
+        source_data(Info,Spec,Alias,File, Code).
+
+source_data(_Info,Spec,_Alias,_File, Code):-
 	absolute_file_name(Spec, Path,
 			   [ access(read),
 			     file_errors(fail)
 			   ]),
-	setup_call_cleanup(
+	catch(setup_call_cleanup(
 	    open(Path, read, In, [encoding(utf8)]),
 	    read_string(In, _, Code),
-	    close(In)).
+	    close(In)),_,fail).
+
+source_data(Path,_,_,_, Code):-
+	catch(setup_call_cleanup(
+	    open(Path, read, In, [encoding(utf8)]),
+	    read_string(In, _, Code),
+	    close(In)),_,fail).
+
+source_data(_,_,_,Path, Code):-
+	catch(setup_call_cleanup(
+	    open(Path, read, In, [encoding(utf8)]),
+	    read_string(In, _, Code),
+	    close(In)),_,fail).
+
+source_data(Info,Spec,Alias,File, Code):- 'sformat'(Code,'~n~q.~n',[source_data(Info,Spec,Alias,File)]),!.
 
 %%	serve_resource(+Request) is semidet.
 %
@@ -172,6 +189,7 @@ resource_prefix('bower_components/').
 %%	swish_page(+Options)//
 %
 %	Generate the entire SWISH default page.
+:-use_module(cliopatria(components/menu)).
 
 swish_page(Options) -->
 	swish_navbar(Options),
@@ -183,12 +201,12 @@ swish_page(Options) -->
 
 swish_navbar(_Options) -->
 	swish_resources,
-	html(header(class([navbar, 'navbar-default']),
+	html([header(class([navbar, 'navbar-default']),
 		    div(class([container, 'pull-left']),
 			[ div(class('navbar-header'),
 			      \swish_logos),
 			  nav(id(navbar), [])
-			]))).
+			]))]).
 
 swish_logos -->
 	pengine_logo,
@@ -245,6 +263,8 @@ source(Options) -->
 	  ;   Extra = []
 	  )
 	},
+        cp_menu,
+        html([p('')]),
 	html(textarea([ class([source,prolog]),
 			style('display:none')
 		      | Extra
