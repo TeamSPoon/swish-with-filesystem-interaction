@@ -1,6 +1,24 @@
+#!/usr/local/bin/swipl 
+
+:-ensure_loaded('../src_lib/logicmoo_util/logicmoo_util_all').
 :-module(user).
+add_to_search_path(Alias, Abs) :-
+	is_absolute_file_name(Abs), !,
+	prolog_load_context(file, Here),
+	relative_file_name(Abs, Here, Rel),
+	assertz(user:file_search_path(Alias, Rel)),
+   absolute_file_name(Rel,ABSF),
+   assertz(user:file_search_path(Alias, ABSF)).
 
+add_to_search_path(Alias, Rel) :-
+	assertz(user:file_search_path(Alias, Rel)),
+   absolute_file_name(Rel,ABSF),
+   assertz(user:file_search_path(Alias, ABSF)).
 
+:- add_to_search_path(cliopatria, '../../ClioPatria').
+:- add_to_search_path(swish, '../../swish').
+
+:- use_module(swish).
 
 
 % setup paths to load relevant packages from development environment
@@ -29,6 +47,7 @@
 :- use_module(library(http/http_files)).
 :- use_module(library(http/http_dispatch)).
 
+
 :- pengine_application(swish).
 :- use_module(swish:library(pengines_io)).
 pengines:prepare_module(Module, swish, _Options) :- pengines_io:pengine_bind_io_to_html(Module).
@@ -47,7 +66,8 @@ pengines:prepare_module(Module, swish, _Options) :- pengines_io:pengine_bind_io_
 % doesn't descend from root because that's being moved for cliopatria
 http:location(cliopatria, root(cliopatria), [priority(100)]).
 :- use_module(library(memfile)).
-:- use_module(server).
+%:- use_module(server).
+:-use_module(cliopatria(components/menu)).
 
 /*
 swish_highlight:insert_memory_file(X,Y,Z):-dmsg(error(swish_highlight:insert_memory_file(X,Y,Z))).
@@ -57,7 +77,7 @@ swish_highlight:memory_file_substring(X,Y,Z,A,B):-dmsg(error(swish_highlight:mem
 swish_highlight:memory_file_to_string(X,Y):- memory_file_to_codes(X,C),string_codes(Y,C). %  dmsg(error(swish_highlight:memory_file_to_string(X,Y))).
 */
 
-:-['../src/logicmoo_util/logicmoo_util_all'].
+% :-ensure_loaded('../src_lib/logicmoo_util/logicmoo_util_all').
 
 % :- listing((http:location(_, _, _))),retractall((http:location(cliopatria, root('.'), []))), retractall((http:location(_, root('.'), []))),!.
 
@@ -69,9 +89,6 @@ prolog:sandbox_allowed_clause(Clause):-nonvar(Clause).
 sandbox:safe_primitive(X):-nonvar(X),!.
 sandbox:safe_primitive(P):-var(P),!,current_predicate(F/A),functor(P,F,A).
 sandbox:safe_primitive(M:P):-var(P),!,current_predicate(M:F/A),functor(P,F,A).
-
-user:file_search_path(cliopatria, '/devel/ClioPatria'). %  current_prolog_flag(unix,true).
-user:file_search_path(cliopatria, 't:/devel/ClioPatria'):- not( current_prolog_flag(unix,true)).
 
 :- user:file_search_path(cliopatria,SP),
    exists_directory(SP),
@@ -88,6 +105,7 @@ user:file_search_path(cliopatria, 't:/devel/ClioPatria'):- not( current_prolog_f
 
 % :- retractall((http:location(_, root('.'), []))).
 :- listing((http:location(_, _, _))).
+
 
 
 :- use_module(cliopatria(cliopatria)).
@@ -212,9 +230,18 @@ doug_debug(O):-format(user_error,'~nDOUG_DEBUG: ~q.~n',[O]),!.
 :-debug(cm(_)).
 :-debug(swish(_)).
 :-debug(storage).
-:-debug(_).
+% :-debug(_).
 
 testml([]):-!. testml([M|L]):-!,testml(M),testml(L). 
 testml(M):-atomic(M),!,format('~w',[M]).
 testml(nl(E)):-!,ignore((between(0,E,_),nl,fail)).
 testml(ML):-phrase(ML,C,[]),testml(C).
+
+:- cp_server:attach_account_info.
+:- ensure_loaded(user(user_db)).
+:- use_module(library(http/thread_httpd)).
+:- use_module(library(http/http_dispatch)).
+:- http_server(http_dispatch,
+		    [ port(3020),
+		      workers(16)
+		    ]).

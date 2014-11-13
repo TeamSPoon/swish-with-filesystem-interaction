@@ -63,7 +63,7 @@ set_swish_path :-
 :- set_swish_path.
 
 http:location(swish, root(.), [priority(-100)]).
-http:location(swish, root(swish), [priority(-100)]).
+http:location(swish, root(swish), []).
 
 		 /*******************************
 		 *	      CONFIG		*

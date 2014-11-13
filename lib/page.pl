@@ -189,7 +189,7 @@ resource_prefix('bower_components/').
 %%	swish_page(+Options)//
 %
 %	Generate the entire SWISH default page.
-:-use_module(cliopatria(components/menu)).
+:- catch( use_module(cliopatria(components/menu)),_,true).
 
 swish_page(Options) -->
 	swish_navbar(Options),
@@ -254,6 +254,7 @@ swish_content(Options) -->
 %	  - file(+File)
 %	  If present and code(String) is present, also associate the
 %	  editor with the given file.  See storage.pl.
+cp_menu_safe(X,Y):-catch(cp_menu(X,Y),_,X=Y).
 
 source(Options) -->
 	{ option(code(Spec), Options), !,
@@ -263,7 +264,7 @@ source(Options) -->
 	  ;   Extra = []
 	  )
 	},
-        cp_menu,
+        cp_menu_safe,
         html([p('')]),
 	html(textarea([ class([source,prolog]),
 			style('display:none')
