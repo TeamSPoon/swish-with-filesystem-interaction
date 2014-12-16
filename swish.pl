@@ -42,6 +42,7 @@
 :- use_module(lib/filesystems).
 :- use_module(lib/help).
 :- use_module(lib/highlight).
+:- use_module(lib/template_hint, []).
 
 
 		 /*******************************
