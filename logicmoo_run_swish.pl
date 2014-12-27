@@ -1,27 +1,18 @@
 #!/usr/local/bin/swipl 
 
-:-ensure_loaded('../src_lib/logicmoo_util/logicmoo_util_all').
-:-module(user).
-add_to_search_path(Alias, Abs) :-
-	is_absolute_file_name(Abs), !,
-	prolog_load_context(file, Here),
-	relative_file_name(Abs, Here, Rel),
-	assertz(user:file_search_path(Alias, Rel)),
-   absolute_file_name(Rel,ABSF),
-   assertz(user:file_search_path(Alias, ABSF)).
+% :- module(swish_with_localedit,[]).
 
-add_to_search_path(Alias, Rel) :-
-	assertz(user:file_search_path(Alias, Rel)),
-   absolute_file_name(Rel,ABSF),
-   assertz(user:file_search_path(Alias, ABSF)).
+:-ensure_loaded('../../src_lib/logicmoo_util/logicmoo_util_all').
 
-:- add_to_search_path(cliopatria, '../../ClioPatria').
-:- add_to_search_path(swish, '../../swish').
+:- use_module(library(process)).
+install_bower:- prolog_file_dir(('.'),LPWD),
+   process_create(sudo,[bower,install,'--allow-root'],[cwd(LPWD),process(PID)]),
+   process_wait(PID,_Status).
 
-:- use_module(swish).
-
+:- add_to_search_path(swish, '../swish').
 
 % setup paths to load relevant packages from development environment
+
 /*
 :- asserta(user:file_search_path(foreign, '../http')).
 :- asserta(user:file_search_path(foreign, '../clib')).
@@ -33,6 +24,7 @@ add_to_search_path(Alias, Rel) :-
 :- asserta(user:file_search_path(library, '../clib')).
 :- asserta(user:file_search_path(js, 'web/js')).
 */
+
 % Hack: auto-loading this does not work.
 :- [library(charsio)].
 :- [charsio:library(memfile)].
@@ -47,6 +39,8 @@ add_to_search_path(Alias, Rel) :-
 :- use_module(library(http/http_files)).
 :- use_module(library(http/http_dispatch)).
 
+:- ensure_loaded(swish).
+
 
 :- pengine_application(swish).
 :- use_module(swish:library(pengines_io)).
@@ -58,16 +52,13 @@ pengines:prepare_module(Module, swish, _Options) :- pengines_io:pengine_bind_io_
 % :- use_module(library(pldoc/doc_http)).
 
 
-
 :- use_module(library(settings)).
 
 :- multifile http:location/3.
 :- dynamic   http:location/3.
-% doesn't descend from root because that's being moved for cliopatria
-http:location(cliopatria, root(cliopatria), [priority(100)]).
+
 :- use_module(library(memfile)).
 %:- use_module(server).
-:-use_module(cliopatria(components/menu)).
 
 /*
 swish_highlight:insert_memory_file(X,Y,Z):-dmsg(error(swish_highlight:insert_memory_file(X,Y,Z))).
@@ -77,11 +68,6 @@ swish_highlight:memory_file_substring(X,Y,Z,A,B):-dmsg(error(swish_highlight:mem
 swish_highlight:memory_file_to_string(X,Y):- memory_file_to_codes(X,C),string_codes(Y,C). %  dmsg(error(swish_highlight:memory_file_to_string(X,Y))).
 */
 
-% :-ensure_loaded('../src_lib/logicmoo_util/logicmoo_util_all').
-
-% :- listing((http:location(_, _, _))),retractall((http:location(cliopatria, root('.'), []))), retractall((http:location(_, root('.'), []))),!.
-
-% :- asserta((http:location(pldoc, root('pldoc'), []))), asserta((http:location(pldoc_resource, root('pldoc'), []) :- pldoc_http:http_location_by_id(pldoc_resource, root('pldoc')))).
 
 :-multifile(prolog:sandbox_allowed_clause/1).
 prolog:sandbox_allowed_clause(Clause):-nonvar(Clause).
@@ -89,39 +75,6 @@ prolog:sandbox_allowed_clause(Clause):-nonvar(Clause).
 sandbox:safe_primitive(X):-nonvar(X),!.
 sandbox:safe_primitive(P):-var(P),!,current_predicate(F/A),functor(P,F,A).
 sandbox:safe_primitive(M:P):-var(P),!,current_predicate(M:F/A),functor(P,F,A).
-
-:- user:file_search_path(cliopatria,SP),
-   exists_directory(SP),
-   writeq(user:file_search_path(cliopatria,SP)),nl.
-   %set_setting_default(cliopatria_binding:path, SP).
-   %save_settings('moo_settings.db').
-   %%setting(cliopatria_binding:path, atom, SP, 'Path to root of cliopatria install'),!.
-
-:- use_module(cliopatria('applications/help/load')).
-
-% Load ClioPatria itself.  Better keep this line.
-
-:- use_module(cliopatria(cliopatria)).
-
-% :- retractall((http:location(_, root('.'), []))).
-:- listing((http:location(_, _, _))).
-
-
-
-:- use_module(cliopatria(cliopatria)).
-
-% Load package manager
-
-:- use_module(library(cpack/cpack)).
-
-% Load the remainder of the  configuration. The directory config-enabled
-% can also be used to  load   additional  (plugin)  functionality.
-
-:- use_module(library(conf_d)).
-
-:- load_conf_d([ 'config-enabled' ], []).
-
-% :- http_server(http_dispatch, [port(3050)]).
 
 
 :- use_module(library(pldoc)).
@@ -142,6 +95,7 @@ sandbox:safe_primitive(M:P):-var(P),!,current_predicate(M:F/A),functor(P,F,A).
 :- use_module(library(option)).
 :- use_module(library(error)).
 :- use_module(library(www_browser)).
+
 :- use_module(pldoc(doc_process)).
 :- use_module(pldoc(doc_htmlsrc)).
 :- use_module(pldoc(doc_html)).
@@ -155,6 +109,8 @@ sandbox:safe_primitive(M:P):-var(P),!,current_predicate(M:F/A),functor(P,F,A).
 
 :- use_module(library(doc_http)).
 :- abolish(pldoc_http:src_skin,5).
+
+
 
 pldoc_http:src_skin(Request, _Show, FormatComments, header, Out) :-  
   pldoc_http:((     
@@ -226,10 +182,7 @@ pldoc_html:source_button(File, _Options) -->
 
 
 doug_debug(O):-format(user_error,'~nDOUG_DEBUG: ~q.~n',[O]),!.
-:-debug(http_request(_)).
-:-debug(cm(_)).
-:-debug(swish(_)).
-:-debug(storage).
+
 % :-debug(_).
 
 testml([]):-!. testml([M|L]):-!,testml(M),testml(L). 
@@ -237,11 +190,21 @@ testml(M):-atomic(M),!,format('~w',[M]).
 testml(nl(E)):-!,ignore((between(0,E,_),nl,fail)).
 testml(ML):-phrase(ML,C,[]),testml(C).
 
-:- cp_server:attach_account_info.
-:- ensure_loaded(user(user_db)).
+/*
+:- asserta((http:location(pldoc, root('pldoc'), []))), 
+   asserta((http:location(pldoc_resource, root('pldoc'), []) :- pldoc_http:http_location_by_id(pldoc_resource, root('pldoc')))),
+   asserta((http:location(pldoc_resource, R, []) :- pldoc_http:http_location_by_id(pldoc_resource, R))).
+*/
+
+:- ensure_loaded(swish).
+
+:- on_signal(hup, _, hup).
+
+hup(_Signal) :-
+        thread_send_message(main, stop).
+
 :- use_module(library(http/thread_httpd)).
 :- use_module(library(http/http_dispatch)).
-:- http_server(http_dispatch,
-		    [ port(3020),
-		      workers(16)
-		    ]).
+:- if_startup_script((http_server(http_dispatch, [ port(3050), workers(16) ]),
+  debug(http_request(_)),debug(cm(_)),debug(swish(_)),debug(storage))).
+

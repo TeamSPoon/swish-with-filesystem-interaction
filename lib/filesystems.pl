@@ -99,5 +99,3 @@ ex_file_json(HREF0, Path, json{file:File, href:HREF, title:Base}) :-
 	file_name_extension(Base, _, File),
 	directory_file_path(HREF0, File, HREF).
 
-
-:-guitracer.

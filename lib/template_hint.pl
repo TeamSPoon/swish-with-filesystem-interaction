@@ -212,7 +212,8 @@ safe(_, _).
 predicate_template(PI, Dict) :-
 	findall(Pair, predicate_info(PI, Pair), Pairs),
 	Pairs \== [],
-	dict_pairs(Dict, json, Pairs).
+        swish_config:remove_duplicate_ids(Pairs,Unique),
+	dict_pairs(Dict, json, Unique).
 
 predicate_info(PI, Pair) :-
 	(   man_predicate_info(PI, Pair)
@@ -515,7 +516,7 @@ imported_from(Module, FromModule) :-
 
 swish_templates(Template) :-
 	setof(From, visible_lib(swish, From), FromList),
-	swish_templates(Template, [from(FromList)]).
+	swish_templates(Template, [from(FromList)]),!.
 
 swish_templates(Template, Options) :-
 	library_template(Template, Options).

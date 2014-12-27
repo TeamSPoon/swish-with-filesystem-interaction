@@ -172,7 +172,8 @@ storage_get(Request, _) :-
 
 authentity(Request, Authentity) :-
 	phrase(authentity(Request), Pairs),
-	dict_pairs(Authentity, _, Pairs).
+        swish_config:remove_duplicate_ids(Pairs,Unique),
+	dict_pairs(Authentity, _, Unique).
 
 authentity(Request) -->
 	(user(Request)->[];[]),

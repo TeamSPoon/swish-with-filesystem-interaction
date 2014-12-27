@@ -698,7 +698,8 @@ swish_config:config(cm_style, Styles) :-
 	dict_pairs(Styles, json, Unique).
 swish_config:config(cm_hover_style, Styles) :-
 	findall(Sel-Attrs, css_dict(hover, Sel, Attrs), Pairs),
-	dict_pairs(Styles, json, Pairs).
+        remove_duplicate_styles(Pairs, Unique),
+	dict_pairs(Styles, json, Unique).
 
 remove_duplicate_styles([], []).
 remove_duplicate_styles([H|T0], [H|T]) :-

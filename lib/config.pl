@@ -28,7 +28,7 @@
 */
 
 :- module(swish_config,
-	  [ swish_reply_config/1
+	  [ swish_reply_config/1, remove_duplicate_ids/2
 	  ]).
 :- use_module(library(http/http_dispatch)).
 :- use_module(library(http/http_json)).
@@ -89,7 +89,8 @@ same_ids(T, _, T, []).
 
 swish_config(Config) :-
 	findall(Key-Value, config(Key, Value), Pairs),
-	dict_pairs(Config, json, Pairs).
+        remove_duplicate_ids(Pairs,Unique),
+	dict_pairs(Config, json, Unique).
 
 %%	config(-Key, -Value) is nondet.
 %
