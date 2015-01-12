@@ -2,6 +2,7 @@
 
 % :- module(swish_with_localedit,[]).
 
+:- multifile(user:semweb_startup).
 :-ensure_loaded('../../src_lib/logicmoo_util/logicmoo_util_all').
 
 :- use_module(library(process)).
