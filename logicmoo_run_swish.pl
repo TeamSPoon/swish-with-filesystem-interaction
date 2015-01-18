@@ -133,7 +133,7 @@ pldoc_http:src_skin(Request, _Show, FormatComments, header, Out) :-
 
 % called through source_to_html/3.
 :- public(pldoc_http:src_skin/5).
-:- listing(pldoc_http:src_skin/5).
+:- prolog_listing:listing(pldoc_http:src_skin/5).
 
 edit_file_href(_Options,File0, HREF) :-
  pldoc_index:((  is_absolute_file_name(File0),
@@ -199,7 +199,7 @@ testml(ML):-phrase(ML,C,[]),testml(C).
 
 :- ensure_loaded(swish).
 
-:- on_signal(hup, _, hup).
+:- catch(on_signal(hup, _, hup),E,warning(E)).
 
 hup(_Signal) :-
         thread_send_message(main, stop).
