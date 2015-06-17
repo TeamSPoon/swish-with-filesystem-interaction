@@ -1,18 +1,7 @@
 // list of examples, represented as a JSON list
 
 [
-{ "file":"kb.pl",		  "title":"FS Knowledge bases" },
-{ "file":"movies.pl",		  "title":"FS Movie database" },
-{ "file":"lists.pl",		  "title":"FS Lists" },
-{ "file":"io.pl",		  "title":"FS Read and write" },
-{ "file":"database.pl",		  "title":"FS Assert and retract" },
-{ "file":"grammar.pl",		  "title":"FS DCG grammar" },
-{ "file":"eliza.pl",		  "title":"FS Eliza" },
-{ "file":"expert-system.pl",	  "title":"FS Expert system" },
-{ "file":"houses_puzzle.pl",	  "title":"FS Einstein's Riddle" },
-{ "file":"queens.pl",		  "title":"FS Queens (traditional)" },
-{ "file":"clpfd-queens.pl",	  "title":"FS Queens (clp(fd))" },
-{ "file":"clpfd-sudoku.pl",	  "title":"FS Sudoku (clp(fd))" },
-{ "file":"knights_and_knaves.pl", "title":"FS Knights and Knaves (clp(b))" },
+{ "file":"cmd_look.pl",		  "title":"Look Command" },
+{ "file":"cmd_chat80.pl",		  "title":"Chat80" },
 // { "file":"japanese.pl",		  "title":"Japanese source" },
 ]
