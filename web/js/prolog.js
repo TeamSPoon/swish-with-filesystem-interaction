@@ -108,6 +108,7 @@ define([ "jquery", "config", "form", "preferences",
 			   attr("ask", query),
 			   attr("src_text", source),
 			   attr("template", format+"("+options.projection+")"));
+	console.log(formel);
 	$("body").append(formel);
 	formel.submit();
 	$(formel).remove();
