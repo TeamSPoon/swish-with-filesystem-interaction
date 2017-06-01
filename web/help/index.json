@@ -3,12 +3,13 @@
 [ { "file":"about.html",      "title":"About" },
   "--",
   { "file":"help.html",	      "title":"Help" },
+ "--",
   { "file":"help-cplint.html","title":"Help on cplint"},
-  { "url":"http://ds.ing.unife.it/~gcota/plptutorial/", "title":"Tutorial" },
+  { "url":"http://ds.ing.unife.it/~gcota/plptutorial/", "title":"PLP Tutorial" },
   { "url":"http://cplint.lamping.unife.it/pldoc/doc/home/trill/lib/swipl/pack/cplint/prolog/", "title":"Pldoc on cplint"},
 
   { "file":"help-aleph.html", "title":"Help on Aleph"},
-
+ "--",
   { "file":"runner.html",     "title":"Runner" },
   { "file":"debug.html",      "title":"Debugging" },
   { "file":"notebook.html",   "title":"Notebook" },

@@ -1,6 +1,10 @@
 // list of examples, represented as a JSON list
 
-[
+[ 
+{ "file":"pfc/pfc_examples.swinb", "title":"Prolog Forward Chaining Examples & Tutorials"},
+{ "file":"logicmoo/logicmoo_examples.swinb", "title":"LogicMOO/CLIF Examples & Tutorials"},
+{ "file":"prologmud/prologmud_examples.swinb", "title":"PrologMUD Examples & Tutorials"},
+"--",
 { "file":"inference/inference_examples.swinb", "title":"cplint inference example programs"},
 { "file":"learning/learning_examples.swinb", "title":"SLIPCOVER learning example programs"},
 { "file":"lemur/lemur_examples.swinb", "title":"LEMUR learning example programs"},
@@ -13,5 +17,9 @@
 { "file":"dict.swinb",		  "title":"Dict tutorial" },
 { "file":"rendering.swinb",	  "title":"Render data graphically" },
 { "file":"stats.swinb",		  "title":"Usage statistics" },
-{ "file":"jquery.swinb",	  "title":"Access the SWISH interface" }
+{ "file":"jquery.swinb",	  "title":"Access the SWISH interface" },
+"--",
+  { "file":"prolog_tutorials.swinb", "title":"Prolog tutorials" },
+  { "file":"swish_tutorials.swinb",  "title":"SWISH tutorials" },
+  { "file":"/tutorial/tutorial.swinb", "title":"Tutorial Tutorials"}
 ]

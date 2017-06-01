@@ -152,7 +152,7 @@ swish_reply3(_, Options) :-
 swish_reply3(_, Options) :-
 	reply_html_page(
 	    swish(main),
-	    [ title('cplint on SWISH -- Probabilistic Logic Programming'),
+	    [ title('PrologMUD/cplint on SWISH -- [Non and]Probabilistic Logic Programming'),
 	      link([ rel('shortcut icon'),
 		     href('/icons/favicon.ico')
 		   ]),

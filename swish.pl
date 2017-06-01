@@ -58,7 +58,6 @@
 :- use_module(library(aleph)).
 :- use_module(library(sldnfdraw)).
 
-
 		 /*******************************
 		 *	       CORS		*
 		 *******************************/
@@ -146,7 +145,9 @@ swish_config:config(show_beware,        false).
 swish_config:config(tabled_results,     false).
 swish_config:config(application,        swish).
 swish_config:config(csv_formats,        [prolog]).
-swish_config:config(community_examples, false).
+% Allows users to extend the Examples menu by ticking the Example
+% checkbox.
+swish_config:config(community_examples, true).
 swish_config:config(public_access,      false).
 swish_config:config(include_alias,	example).
 swish_config:config(ping,		10).
@@ -208,6 +209,7 @@ pengines:prepare_module(Module, swish, _Options) :-
 
 % load rendering modules
 
+:- use_module(swish(lib/render/html),	  []).
 :- use_module(swish(lib/render/sudoku),	  []).
 :- use_module(swish(lib/render/chess),	  []).
 :- use_module(swish(lib/render/table),	  []).
@@ -236,3 +238,19 @@ sandbox:safe_primitive(nf_r:{_}).
 
 
 :- use_module(swish(lib/render/bdd),	  []).
+
+
+:- if(exists_source(library(trill))).
+% :- use_module(library(trill)).
+:- endif.
+
+:- if(exists_source(library(must_trace))).
+%:- use_module(library(must_trace)).
+:- endif.
+:- if(exists_source(library(pfc))).
+%:- use_module(library(pfc)).
+:- endif.
+:- if(exists_source(library(logicmoo_user))).
+% :- use_module(library(logicmoo_user)).
+:- endif.
+
