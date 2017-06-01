@@ -41,6 +41,10 @@
 :- use_module(library(apply)).
 :- use_module(library(settings)).
 
+:- if(exists_source(rdfql(sparql_csv_result))).
+:- use_module(rdfql(sparql_csv_result)).
+:- endif.
+
 :- use_module(lib/messages).
 :- use_module(lib/paths).
 :- use_module(lib/config, []).
@@ -133,6 +137,8 @@ load_config.
 %	  chart with stack usage.
 %	  - notebook
 %	  Dict holding options for notebooks.
+%        - nb_eval_script
+%        Evaluate scripts in HTML cells of notebooks?
 %	  - chat
 %	  Activate the chat interface
 
@@ -144,7 +150,9 @@ term_expansion(swish_config:config(Config, _Value), []) :-
 swish_config:config(show_beware,        false).
 swish_config:config(tabled_results,     false).
 swish_config:config(application,        swish).
-swish_config:config(csv_formats,        [prolog]).
+swish_config:config(csv_formats,    [rdf, prolog]).
+% swish_config:config(csv_formats,        [prolog]).
+
 % Allows users to extend the Examples menu by ticking the Example
 % checkbox.
 swish_config:config(community_examples, true).
@@ -169,6 +177,49 @@ swish_config:config(chat,		true).
 % setup HTTP session management
 :- use_module(lib/session).
 
+		 /*******************************
+		 *	        CSV		*
+		 *******************************/
+
+:- multifile
+	swish_csv:write_answers/2,
+	swish_csv:write_answers/3.
+
+swish_csv:write_answers(Answers, VarTerm) :-
+        Answers = [H|_],
+        functor(H, rdf, _), !,
+        sparql_write_csv_result(
+            current_output,
+            select(VarTerm, Answers),
+            []).
+
+swish_csv:write_answers(Answers, VarTerm, Options) :-
+        Answers = [H|_],
+        functor(H, rdf, _),
+	option(page(1), Options), !,
+        sparql_write_csv_result(
+            current_output,
+            select(VarTerm, Answers),
+            [ bnode_state(_-BNodes)
+	    ]),
+	nb_setval(rdf_csv_bnodes, BNodes).
+swish_csv:write_answers(Answers, VarTerm, Options) :-
+        Answers = [H|_],
+        functor(H, rdf, _),
+	option(page(Page), Options),
+	Page > 1, !,
+	nb_getval(rdf_csv_bnodes, BNodes0),
+        sparql_write_csv_result(
+            current_output,
+            select(VarTerm, Answers),
+            [ http_header(false),
+	      header_row(false),
+	      bnode_state(BNodes0-BNodes)
+	    ]),
+	nb_setval(rdf_csv_bnodes, BNodes).
+swish_csv:write_answers(Answers, VarTerm, _Options) :-
+	swish_csv:write_answers(Answers, VarTerm).
+
 
                  /*******************************
                  *   CREATE SWISH APPLICATION   *
@@ -185,6 +236,10 @@ swish_config:config(chat,		true).
 :- use_module(swish:lib/dashboard).
 :- use_module(swish:lib/swish_debug).
 :- use_module(swish:library(pengines_io)).
+:- use_module(swish:library(semweb/rdf_db)).
+:- use_module(swish:library(semweb/rdfs)).
+% :- use_module(swish:library(semweb/rdf_optimise)).
+:- use_module(swish:library(semweb/rdf_litindex)).
 :- use_module(swish:library(solution_sequences)).
 :- use_module(swish:library(aggregate)).
 :- use_module(swish:lib/r_swish).
@@ -205,6 +260,9 @@ pengines:prepare_module(Module, swish, _Options) :-
 
 :- use_module(library(clpfd), []).
 :- use_module(library(clpb), []).
+:- if(exists_source(library(semweb/rdf11))).
+:- use_module(library(semweb/rdf11), []).
+:- endif.
 :- use_module(lib/swish_chr, []).
 
 % load rendering modules
@@ -254,3 +312,5 @@ sandbox:safe_primitive(nf_r:{_}).
 % :- use_module(library(logicmoo_user)).
 :- endif.
 
+% CLIOPATRIA rendering libraries
+% :- use_module(swish_app:lib/render/cp_rdf,      []).

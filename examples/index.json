@@ -21,5 +21,6 @@
 "--",
   { "file":"prolog_tutorials.swinb", "title":"Prolog tutorials" },
   { "file":"swish_tutorials.swinb",  "title":"SWISH tutorials" },
-  { "file":"/tutorial/tutorial.swinb", "title":"Tutorial Tutorials"}
+  { "file":"/tutorial/tutorial.swinb", "title":"Tutorial Tutorials"},
+  { "file":"rdf_examples.swinb",		"title":"RDF queries" }
 ]
