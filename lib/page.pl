@@ -80,6 +80,10 @@ grammer rules. This allows for server-side   generated  pages to include
 swish or parts of swish easily into a page.
 */
 
+
+:- multifile http:location/3.
+:- dynamic http:location/3.
+
 http:location(pldoc, swish(pldoc), [priority(100)]).
 
 :- http_handler(swish(.), swish_reply([]), [id(swish), prefix]).
