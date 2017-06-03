@@ -67,11 +67,14 @@ Open SWISH as an IDE for developing a local application.
 	pengines:not_sandboxed/2,		% User, Application
 	user:file_search_path/2.		% Alias, Path
 
+:- prolog_load_context(directory,Dir),asserta(user:file_search_path(swish, Dir)).
 user:file_search_path(project, '.').
 
 :- dynamic http:location/3.
 :- multifile http:location/3.
 http:location(root, '/', [priority(1100)]).
+http:location(swish, root('swish'), [priority(500)]).
+
 
 :- multifile pengines:allowed/2.
 :- dynamic pengines:allowed/2.
@@ -142,7 +145,7 @@ swish_config:authenticate(Request, User) :- \+ http_session:http_in_session(_),
   !.
 
 
-:- use_module(swish).
+:- use_module(swish(swish)).
 
   
 swish_config:authenticate(Request, "bad_user") :- 

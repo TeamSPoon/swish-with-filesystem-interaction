@@ -1,4 +1,4 @@
-% Constraint Logic Programming
+% PrologMUD
 :- use_module(library(dif)).		% Sound inequality
 :- use_module(library(clpfd)).		% Finite domain constraints
 :- use_module(library(clpb)).		% Boolean constraints

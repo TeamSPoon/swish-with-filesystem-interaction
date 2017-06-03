@@ -334,7 +334,16 @@ swish_page(Options) -->
 %
 %	Generate the swish navigation bar.
 
+
 swish_navbar(Options) -->
+   {current_predicate(cp_menu:cp_menu/2)},
+        cp_menu:cp_menu,
+        was_swish_navbar(Options),!.
+
+swish_navbar(Options) -->
+        was_swish_navbar(Options),!.
+
+was_swish_navbar(Options) -->
 	swish_resources,
 	html(div([id('navbarhelp'),style('height:40px;margin: 10px 5px;text-align:center;')],
         [span([style('color:maroon')],['cplint on ']),
@@ -343,39 +352,39 @@ swish_navbar(Options) -->
         ' is a web application for probabilistic logic programming',
         ' with a Javascript-enabled browser.',
         &(nbsp), &(nbsp),
-        a([href('/help/about.html'),target('_blank')],['About']),
+        a([href('help/about.html'),target('_blank')],['About']),
         &(nbsp), &(nbsp),
-        a([href('/help/help-cplint.html'),target('_blank')],['Help']),
+        a([href('help/help-cplint.html'),target('_blank')],['CPLINT-Help']),
         &(nbsp), &(nbsp),
-        a([href('/help/credits.html'),target('_blank')],['Credits']),
+        a([href('help/credits.html'),target('_blank')],['Credits']),
         &(nbsp), &(nbsp),
         a([id('dismisslink'),href('')],['Dismiss']),
 	p([span([style('color:red')],['New']),': ',
-  a([href('/example/inference/tile_map.swinb')],['Tile map generation']),
+  a([href('example/inference/tile_map.swinb')],['Tile map generation']),
   ', ',
-   a([href('/example/inference/path_tabling.swinb')],['Tabling']),
+   a([href('example/inference/path_tabling.swinb')],['Tabling']),
   ', ',
    'Event calculus: ',
-  a([href('/example/inference/tiny_event_calculus.pl')],['inference']),
+  a([href('example/inference/tiny_event_calculus.pl')],['inference']),
   ', ',
-  a([href('/example/learning/learn_effect_axioms.pl')],['learning']),
+  a([href('example/learning/learn_effect_axioms.pl')],['learning']),
   '; ',
-  a([href('/help/help-cplint.html#causal'),target('_blank')],['Causal inference']),': ',
-  a([href('/example/inference/simpson.swinb')],['Simpson''s paradox']),', ',
-  a([href('/example/inference/viral.swinb')],['viral marketing']),'; ',
-  a([href('/example/inference/lda.swinb')],['Latent Dirichlet Allocation']),'; ',
+  a([href('help/help-cplint.html#causal'),target('_blank')],['Causal inference']),': ',
+  a([href('example/inference/simpson.swinb')],['Simpson''s paradox']),', ',
+  a([href('example/inference/viral.swinb')],['viral marketing']),'; ',
+  a([href('example/inference/lda.swinb')],['Latent Dirichlet Allocation']),'; ',
 	a([href('https://sites.google.com/a/unife.it/ml/lemur'),target('_blank')],['LEMUR']),' (',
-	a([href('/example/lemur/lemur_examples.swinb')],['examples']),')'
-%	a([href('/help/help-cplint.html#cont'),target('_blank')],
+	a([href('example/lemur/lemur_examples.swinb')],['examples']),')'
+%	a([href('help/help-cplint.html#cont'),target('_blank')],
 %	['continuous random variables']),' and ',
-%	a([href('/help/help-cplint.html#condqcont'),target('_blank')],
+%	a([href('help/help-cplint.html#condqcont'),target('_blank')],
 %	['likelihood weighting']),': ',
-%	a([href('/example/inference/gaussian_mixture.pl')],
+%	a([href('example/inference/gaussian_mixture.pl')],
 %	['Gaussian mixture']),', ',
-%	a([href('/example/inference/kalman_filter.pl')],
+%	a([href('example/inference/kalman_filter.pl')],
 %	['Kalman filter']),', ',
-%	a([href('/example/inference/seven_scientists.pl')],['Bayesian estimation']),', ',
-%	a([href('/example/inference/indian_gpa.pl')],['Indian GPA problem'])
+%	a([href('example/inference/seven_scientists.pl')],['Bayesian estimation']),', ',
+%	a([href('example/inference/indian_gpa.pl')],['Indian GPA problem'])
        ])])
         ),
 

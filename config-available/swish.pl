@@ -1,4 +1,7 @@
 :- module(conf_swish, []).
+
+:- if(exists_source(cliopatria(hooks))).
+
 :- use_module(cliopatria(hooks)).
 
 /** <module> Add Prolog interaction to ClioPatria
@@ -15,18 +18,20 @@
 user:file_search_path(swish_web, web(.)).
 user:file_search_path(example,   cpacks(swish/examples)).
 user:file_search_path(example,	 examples).
+user:file_search_path(library,   cpacks(.)).
 
 % Load swish.  You need this.
 :- use_module(applications(swish)).
 % Load the authentication hook. When loaded, ClioPatria users with admin
 % rights can use SWISH without sandboxing security
-:- use_module(library(swish/lib/cp_authenticate)).
+%:- use_module(swish('lib/cp_authenticate')).
 % Enable user profile management
-:- use_module(library(swish/lib/plugin/profile)).
+:- use_module(swish(lib/plugin/profile)).
 % Enable notifications
-:- use_module(library(swish/lib/plugin/notify)).
+:- use_module(swish(lib/plugin/notify)).
 % Enable logging of SWISH queries and sources if HTTP logging is enabled
-:- use_module(library(swish/lib/logging)).
+:- use_module(swish(lib/logging)).
+
 % Make side-effect-free RDF predicates safe
 :- if(exists_source(library(semweb/rdf_sandbox))).
 :- use_module(library(semweb/rdf_sandbox)).
@@ -35,7 +40,7 @@ user:file_search_path(example,	 examples).
 % make sure Rserve runs in a good sandbox or only allow for
 % authenticated access.  See https://github.com/JanWielemaker/rserve-sandbox
 :- if(exists_source(library(r/r_call))).
-:- use_module(user:library(swish/lib/r_swish)).
+:- use_module(user:swish(lib/r_swish)).
 :- use_module(library(r/r_sandbox)).
 :- endif.
 
@@ -52,3 +57,5 @@ swish_config:config(community_examples, true).
 %       Add SWISH to the Query menu.
 
 cliopatria:menu_item(300=query/swish, 'SWISH Prolog shell').
+
+:- endif.

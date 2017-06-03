@@ -1,4 +1,5 @@
-% Constraint Logic Programming
+% LogicMOO
+Constraint Logic Programming
 :- use_module(library(dif)).		% Sound inequality
 :- use_module(library(clpfd)).		% Finite domain constraints
 :- use_module(library(clpb)).		% Boolean constraints

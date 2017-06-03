@@ -34,7 +34,6 @@
 */
 
 :- module(config_user_profile, []).
-:- use_module(swish).
 :- use_module(library(settings)).
 :- use_module(library(broadcast)).
 :- use_module(library(user_profile)).

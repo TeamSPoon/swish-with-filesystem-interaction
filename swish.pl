@@ -45,6 +45,8 @@
 :- use_module(rdfql(sparql_csv_result)).
 :- endif.
 
+:- prolog_load_context(directory,Dir),asserta(user:file_search_path(swish, Dir)).
+
 :- use_module(lib/messages).
 :- use_module(lib/paths).
 :- use_module(lib/config, []).
@@ -155,7 +157,9 @@ swish_config:config(csv_formats,    [rdf, prolog]).
 
 % Allows users to extend the Examples menu by ticking the Example
 % checkbox.
+:- if(\+ exists_source(cliopatria(hooks))).
 swish_config:config(community_examples, true).
+:- endif.
 swish_config:config(public_access,      false).
 swish_config:config(include_alias,	example).
 swish_config:config(ping,		10).
@@ -285,7 +289,7 @@ pengines:prepare_module(Module, swish, _Options) :-
 :- use_module(library(pita)).
 :- use_module(library(mcintyre)).
 :- use_module(library(slipcover)).
-:- use_module(library(lemur)).
+:- use_module(library(lemur),[]).
 :- use_module(library(auc)).
 :- use_module(library(matrix)).
 :- use_module(library(clpr)).

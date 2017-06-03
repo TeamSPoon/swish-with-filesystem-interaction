@@ -27,6 +27,10 @@
     the GNU General Public License.
 */
 
+:- include('../swish.pl').
+
+end_of_file.
+
 :- module(swish_app,
 	  [
 	  ]).

@@ -1,7 +1,7 @@
 <div class="notebook">
 
 <div class="nb-cell markdown">
-# Constraing Logic Programming
+# MUD Programming in Prolog - PrologMUD
 
 This skeleton notebook pre-loads SWI-Prolog's libraries for _constraint logic programming_.  The libraries are:
 

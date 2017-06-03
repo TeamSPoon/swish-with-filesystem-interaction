@@ -19,6 +19,11 @@
 { "file":"stats.swinb",		  "title":"Usage statistics" },
 { "file":"jquery.swinb",	  "title":"Access the SWISH interface" },
 "--",
+
+{ "file":"trill/examples_trill.swinb",	"title":"TRILL example programs" },
+  
+"--",
+
   { "file":"prolog_tutorials.swinb", "title":"Prolog tutorials" },
   { "file":"swish_tutorials.swinb",  "title":"SWISH tutorials" },
   { "file":"/tutorial/tutorial.swinb", "title":"Tutorial Tutorials"},
