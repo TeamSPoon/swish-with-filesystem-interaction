@@ -56,6 +56,7 @@
 :- use_module(lib/swish_csv).
 :- use_module(lib/examples).
 :- use_module(lib/profiles).
+:- use_module(lib/filesystems).
 :- use_module(lib/highlight).
 :- use_module(lib/markdown).
 :- use_module(lib/chat, []).

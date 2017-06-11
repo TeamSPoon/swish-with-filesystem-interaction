@@ -51,6 +51,10 @@ Open SWISH as an IDE for developing a local application.
 */
 
 
+from_http(G):- with_output_to(main_error,G).
+
+:- meta_predicate(from_http(0)).
+
 
 :- use_module(library(must_trace)).
 
@@ -74,11 +78,14 @@ user:file_search_path(project, '.').
 :- multifile http:location/3.
 http:location(root, '/', [priority(1100)]).
 http:location(swish, root('swish'), [priority(500)]).
+http:location(root, '/swish', []).
+
+nowdmsg(_).
 
 
 :- multifile pengines:allowed/2.
 :- dynamic pengines:allowed/2.
-% pengines:allowed(_, _) :-!.
+pengines:allowed(_, _) :-!.
 
 /*
 
@@ -94,29 +101,47 @@ swish_config:source_alias(library, []).
 
 swish_config:verify_write_access(_Request, _File, _Options).
 
-pengines:authentication_hook(_Request, swish, User) :-
-	current_user(User).
-pengines:not_sandboxed(_User, _Application).
+pengines:authentication_hook(_Request, swish, User) :-  current_user(User).
+pengines:not_sandboxed(_UUser, _Application):-  current_user(_User).
 
 
-:- if(current_predicate(getuid/1)).
-current_user(User) :- 
-	getuid(UID),
-	user_info(UID, Info),
-	user_data(name, Info, User),!.
-:- endif.
-current_user(default).
+current_user(User):- currently_logged_in(why,User).
+
+currently_logged_in(_Why,D):- thread_self(main), ignore(D=default).
+currently_logged_in(Why,User):- 
+  from_http((http_session:
+    (http_in_session(_SessionID),
+     http_session_data(oauth2(OAuth, _)),
+     http_session_data(user_info(OAuth, Info))),
+   User=Info.name,!, nowdmsg(currently_logged_in(Why,User=Info.name)))),!.
+
+currently_logged_in(Why,User):- 
+  from_http((http_session:
+    (session_data(S,oauth2(OAuth, Y)),
+     nowdmsg(currently_logged_in(User=Why,session_data(S,oauth2(OAuth, Y))))))),!,ignore(User="guest1"),!.
+
+
+currently_logged_in(Why,D):- http_session:http_in_session(SessionID),!,
+   
+  from_http(
+  ((nowdmsg(fail_dispite_http_in_session(SessionID,D,Why)),  
+    http_session:http_in_session(SessionID),
+    listing(http_session: session_data(SessionID,_Data))))),!,fail.
+
+
 
 no_auth_needed(Request):- is_list(Request),memberchk(path_info(Path),Request),mimetype:file_mime_type(Path,Type),memberchk(Type,[image/_,_/javascript]),!.
 no_auth_needed(Request):- is_list(Request),!,memberchk(path(Path),Request),no_auth_needed(Path).
+no_auth_needed(X):- \+ atom(X),!,fail.
+no_auth_needed(X):- atom_concat('/swish',XX,X),!,no_auth_needed(XX).
 no_auth_needed('/chat').
+%no_auth_needed('/login').
 no_auth_needed('/').
+no_auth_needed('').
+
 
 :- multifile swish_config:authenticate/2.
 :- dynamic swish_config:authenticate/2.
-
-swish_config:authenticate(Request, User) :-
-        swish_http_authenticate:logged_in(Request, User), !.
 
 swish_config:authenticate(_Request, User) :- 
   http_session:
@@ -125,31 +150,33 @@ swish_config:authenticate(_Request, User) :-
      http_session_data(user_info(OAuth, Info))),
    User=Info.name,!.
 
+
 swish_config:authenticate(Request, User) :- 
   no_auth_needed(Request),
   current_user(User),!.
 
 
-
+/*
 swish_config:authenticate(Request, User) :- http_session:http_in_session(SessionID),
   current_user(User),
   with_output_to(current_error,
   ((http_session:http_in_session(SessionID),
     listing(http_session: session_data(SessionID,_Data))))),
-  with_output_to(current_error,wdmsg((http_session:authenticate(Request, User)))),
+  with_output_to(current_error,nowdmsg((http_session:authenticate(Request, User)))),
   !.
 
-swish_config:authenticate(Request, User) :- \+ http_session:http_in_session(_),
-  current_user(User),
-  with_output_to(current_error,wdmsg((swish_config:authenticate(Request, User)))),
-  !.
+*/
+
+% swish_config:authenticate(Request, User) :- \+ http_session:http_in_session(_),current_user(User),with_output_to(current_error,nowdmsg((swish_config:authenticate(Request, User)))),!.
 
 
 :- use_module(swish(swish)).
 
   
-swish_config:authenticate(Request, "bad_user") :- 
-  wdmsg(swish_config:authenticate(Request, "bad_user")),!.
+% swish_config:authenticate(Request, "bad_user") :- nowdmsg(swish_config:authenticate(Request, "bad_user")),!.
+swish_config:authenticate(Request, User) :- fail,
+        swish_http_authenticate:logged_in(Request, User), !.
+
   
 
 %%	swish
@@ -178,21 +205,35 @@ open_browser(Address) :-
 	http_server_property(Port, scheme(Scheme)),
 	http_absolute_location(root(.), Path, []),
 	format(atom(URL), '~w://~w:~w~w', [Scheme, Host, Port, Path]),
-	wdmsg(www_open_url(URL)).
+	nowdmsg(www_open_url(URL)).
 
 host_port(Host:Port, Host, Port) :- !.
 host_port(Port, 'prologmoo.com', Port).
 
 :- swish.
 
+:- maplist(   [F] >> ensure_loaded('config-available'/F),
+  [auth_google,  auth_stackoverflow,  data,   email,  hdt,    
+  network,        rlimit,  r_serve,  user_profile,
+   auth_unity,          debug,      logging,  notifications,  rpc,auth_http\]).
+
 
 
 :- [library(pengines)].
-:- pengine_rpc("http://prologmoo.com:3050",
+
+pet:- pengine_rpc("http://prologmoo.com:3050",
                        sin_table(X,Y),
                        [ src_text(':- dynamic(sin_table/2). sin_table(1,2).'),
                          application(swish)
                        ]),
-   wdmsg(sin_table(X,Y)).
+   nowdmsg(sin_table(X,Y)).
 
 :- listing(swish_config:authenticate/2).
+
+:- stream_property(X,file_no(2)),stream_property(X,alias(main_error)).
+
+:- debug.
+:- tdebug.
+
+
+

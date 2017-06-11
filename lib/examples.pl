@@ -108,7 +108,7 @@ example_files(AllExamples) :-
 
 index_json(HREF, Dir, JSON) :-
 	directory_file_path(Dir, 'index.json', File),
-	fail, access_file(File, read), !,
+	access_file(File, read), !,
 	read_file_to_json(File, JSON0),
 	maplist(add_href(HREF), JSON0, JSON).
 index_json(HREF, Dir, JSON) :-

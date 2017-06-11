@@ -86,11 +86,11 @@ confirmation (of the email address) as well as for notifications.
 		 *            DATABASE		*
 		 *******************************/
 
-:- persistent
-        request(key:string,
+:- persistent(
+        'request'(key:string,
                 deadline:integer,
-                action:callable,
-                reply:callable).
+                ('action':callable),
+                reply:callable)).
 
 email_open_db :-
     db_attached(_),

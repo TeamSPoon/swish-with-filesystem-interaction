@@ -187,9 +187,14 @@ var tabbed = {
 	  dom = data.newTab();
 	} else {
 	  dom = this.tabbed('tabSelect');
-	  $(dom).append(this.tabbed('profileForm'),
-			$.el.hr(),
-			this.tabbed('searchForm'));
+
+		var sf = this.tabbed('searchForm');
+		$(dom).append(this.tabbed('profileForm',{}),sf);
+
+		 var ff = $('<iframe id="the_iframe" src="http://prologmoo.com/ef/elfinder.swish.html"/>');
+		 $(ff).css('height',$(window).height() - 20);
+		 $(ff).css('width',"100%");
+		 $(dom).append(sf,ff);
 	}
       }
 

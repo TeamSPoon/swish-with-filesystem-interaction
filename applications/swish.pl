@@ -27,7 +27,7 @@
     the GNU General Public License.
 */
 
-:- include('../swish.pl').
+% :- include('../swish.pl').
 
 end_of_file.
 

@@ -39,6 +39,12 @@
 :- use_module(library(error)).
 :- use_module(library(broadcast)).
 
+% CLIOPATRIA MODE
+:- if(exists_source(components(label))).
+:- use_module(library(semweb/rdf_db)).
+:- use_module(components(label)).
+:- endif.
+
 :- use_module('../render').
 
 :- register_renderer(rdf, "Render RDF terms").
@@ -66,6 +72,15 @@ term_rendering(List, _Vars, Options) -->
 	},
 	html(span([class('rdf-list'), style('display:inline-block')],
 		  \rdf_list(Truncated, Options))).
+
+% CLIOPATRIA MODE
+:- if(exists_source(components(label))).
+term_rendering(Term, _Vars, Options) -->
+	{ ground(Term),
+	  is_rdf(Term)
+	}, !,
+	rdf_link(Term, [target('cliopatria-localview')|Options]).
+:- endif.
 term_rendering(Term, _Vars, Options) -->
 	{ is_rdf(Term) }, !,
 	rdf_link(Term, [target('rdf-link')|Options]).
@@ -109,6 +124,11 @@ is_rdf(literal(Value)) :-
 	is_literal(Value).
 is_rdf(^^(Value,Type)) :- atom(Type), ground(Value).
 is_rdf(@(Text,Lang)) :- atom(Lang), is_text(Text).
+% CLIOPATRIA MODE
+:- if(exists_source(components(label))).
+is_rdf(^^(_,Type)) :- atom(Type).
+is_rdf(@(_,Lang)) :- atom(Lang).
+:- endif.
 
 is_uri(Term) :-
 	atom(Term),
@@ -120,6 +140,10 @@ is_uri(Term) :-
 is_literal(Atomic) :- is_plain_literal(Atomic).
 is_literal(type(Type, Literal)) :- is_uri(Type), is_plain_literal(Literal).
 is_literal(lang(Lang, Literal)) :- atom(Lang),   is_text(Literal).
+% CLIOPATRIA MODE
+:- if(exists_source(components(label))).
+is_literal(lang(Lang, Literal)) :- atom(Lang),   is_plain_literal(Literal).
+:- endif.
 
 is_plain_literal(Value) :-
 	atomic(Value).

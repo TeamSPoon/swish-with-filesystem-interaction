@@ -334,10 +334,54 @@ swish_page(Options) -->
 	swish_navbar(Options),
 	swish_content(Options).
 
+
+was_swish_navbar_cplint(_Options) -->
+	html(div([id('navbarhelp'),style('height:40px;margin: 10px 5px;text-align:center;')],
+        [span([style('color:maroon')],['cplint on ']),
+        span([style('color:darkblue')],['SWI']),
+        span([style('color:maroon')],['SH']),
+        ' is a web application for probabilistic logic programming',
+        ' with a Javascript-enabled browser.',
+        &(nbsp), &(nbsp),
+        a([href('/help/about.html'),target('_blank')],['About']),
+        &(nbsp), &(nbsp),
+        a([href('/help/help-cplint.html'),target('_blank')],['CPLINT-Help']),
+        &(nbsp), &(nbsp),
+        a([href('/help/credits.html'),target('_blank')],['Credits']),
+        &(nbsp), &(nbsp),
+        a([id('dismisslink'),href('')],['Dismiss']),
+	p([span([style('color:red')],['New']),': ',
+  a([href('/example/inference/tile_map.swinb')],['Tile map generation']),
+  ', ',
+   a([href('/example/inference/path_tabling.swinb')],['Tabling']),
+  ', ',
+   'Event calculus: ',
+  a([href('/example/inference/tiny_event_calculus.pl')],['inference']),
+  ', ',
+  a([href('/example/learning/learn_effect_axioms.pl')],['learning']),
+  '; ',
+  a([href('/help/help-cplint.html#causal'),target('_blank')],['Causal inference']),': ',
+  a([href('/example/inference/simpson.swinb')],['Simpson''s paradox']),', ',
+  a([href('/example/inference/viral.swinb')],['viral marketing']),'; ',
+  a([href('/example/inference/lda.swinb')],['Latent Dirichlet Allocation']),'; ',
+	a([href('https://sites.google.com/a/unife.it/ml/lemur'),target('_blank')],['LEMUR']),' (',
+	a([href('/example/lemur/lemur_examples.swinb')],['examples']),')'
+%	a([href('/help/help-cplint.html#cont'),target('_blank')],
+%	['continuous random variables']),' and ',
+%	a([href('/help/help-cplint.html#condqcont'),target('_blank')],
+%	['likelihood weighting']),': ',
+%	a([href('/example/inference/gaussian_mixture.pl')],
+%	['Gaussian mixture']),', ',
+%	a([href('/example/inference/kalman_filter.pl')],
+%	['Kalman filter']),', ',
+%	a([href('/example/inference/seven_scientists.pl')],['Bayesian estimation']),', ',
+%	a([href('/example/inference/indian_gpa.pl')],['Indian GPA problem'])
+       ])])
+        ),!.
+
 %%	swish_navbar(+Options)//
 %
 %	Generate the swish navigation bar.
-
 
 swish_navbar(Options) -->
    {current_predicate(cp_menu:cp_menu/2)},
@@ -349,49 +393,7 @@ swish_navbar(Options) -->
 
 was_swish_navbar(Options) -->
 	swish_resources,
-	html(div([id('navbarhelp'),style('height:40px;margin: 10px 5px;text-align:center;')],
-        [span([style('color:maroon')],['cplint on ']),
-        span([style('color:darkblue')],['SWI']),
-        span([style('color:maroon')],['SH']),
-        ' is a web application for probabilistic logic programming',
-        ' with a Javascript-enabled browser.',
-        &(nbsp), &(nbsp),
-        a([href('help/about.html'),target('_blank')],['About']),
-        &(nbsp), &(nbsp),
-        a([href('help/help-cplint.html'),target('_blank')],['CPLINT-Help']),
-        &(nbsp), &(nbsp),
-        a([href('help/credits.html'),target('_blank')],['Credits']),
-        &(nbsp), &(nbsp),
-        a([id('dismisslink'),href('')],['Dismiss']),
-	p([span([style('color:red')],['New']),': ',
-  a([href('example/inference/tile_map.swinb')],['Tile map generation']),
-  ', ',
-   a([href('example/inference/path_tabling.swinb')],['Tabling']),
-  ', ',
-   'Event calculus: ',
-  a([href('example/inference/tiny_event_calculus.pl')],['inference']),
-  ', ',
-  a([href('example/learning/learn_effect_axioms.pl')],['learning']),
-  '; ',
-  a([href('help/help-cplint.html#causal'),target('_blank')],['Causal inference']),': ',
-  a([href('example/inference/simpson.swinb')],['Simpson''s paradox']),', ',
-  a([href('example/inference/viral.swinb')],['viral marketing']),'; ',
-  a([href('example/inference/lda.swinb')],['Latent Dirichlet Allocation']),'; ',
-	a([href('https://sites.google.com/a/unife.it/ml/lemur'),target('_blank')],['LEMUR']),' (',
-	a([href('example/lemur/lemur_examples.swinb')],['examples']),')'
-%	a([href('help/help-cplint.html#cont'),target('_blank')],
-%	['continuous random variables']),' and ',
-%	a([href('help/help-cplint.html#condqcont'),target('_blank')],
-%	['likelihood weighting']),': ',
-%	a([href('example/inference/gaussian_mixture.pl')],
-%	['Gaussian mixture']),', ',
-%	a([href('example/inference/kalman_filter.pl')],
-%	['Kalman filter']),', ',
-%	a([href('example/inference/seven_scientists.pl')],['Bayesian estimation']),', ',
-%	a([href('example/inference/indian_gpa.pl')],['Indian GPA problem'])
-       ])])
-        ),
-
+       % was_swish_navbar_cplint(Options),
 	html(nav([ class([navbar, 'navbar-default']),
 		   role(navigation)
 		 ],
@@ -739,6 +741,7 @@ include_swish_js -->
 
         ga(''create'', ''UA-16202613-9'', ''auto'');
         ga(''send'', ''pageview'');'])),
+        file_explorer_js,
         { swish_resource(js, JS),
 	  swish_resource(rjs, RJS),
 	  http_absolute_location(swish(js/JS), SwishJS, []),
@@ -780,6 +783,37 @@ alt(css, 'swish.css',     swish_web('css/swish.css')).
 alt(rjs, 'js/require.js', swish_web('js/require.js')) :-
 	\+ debugging(nominified).
 alt(rjs, 'bower_components/requirejs/require.js', -).
+
+file_explorer_js --> 
+     html({|html||         
+        <script>
+            window.addEventListener("DOMContentLoaded", function(){
+                  // addEventListener support for IE8
+                  function bindEvent(element, eventName, eventHandler) {
+                    if (element.addEventListener){
+                      element.addEventListener(eventName, eventHandler, false);
+                    } else if (element.attachEvent) {
+                     element.attachEvent('on' + eventName, eventHandler);
+                    }
+                  }
+                  // Listen to message from child window
+                  bindEvent(window, 'edit', function (e) {
+                          // results.innerHTML = e.data;
+                  //        alert("edit: " + e.data); 
+                  });
+                  // Listen to message from child window
+                  bindEvent(window, 'message', function (e) {
+                          // results.innerHTML = e.data;                         
+                          var navto = '/swish/filesystem/home/prologmud_server/lib/elFinder/'+ e.data;
+                          if(!navto.endsWith("]")) {
+                             // window.document.body.closest(".swish").swish('playURL', {url: navto});
+                             $.fn.swish('playURL', {url: navto});
+                          }
+                          //  
+                 });
+                });      
+       </script>
+     |}),!.
 
 
 		 /*******************************
